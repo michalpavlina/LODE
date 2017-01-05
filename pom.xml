@@ -98,7 +98,7 @@
 					<stopKey>foo</stopKey>
 					<scanIntervalSeconds>10</scanIntervalSeconds>
 					<webApp>
-						<contextPath>/lode</contextPath>
+						<contextPath>/ki1-lode-s</contextPath>
 					</webApp>
 					<connectors>
 						<connector implementation="org.eclipse.jetty.server.nio.SelectChannelConnector">
