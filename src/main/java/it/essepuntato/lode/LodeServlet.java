@@ -176,7 +176,8 @@ public class LodeServlet extends HttpServlet {
 		xsltURL = getServletContext().getRealPath("extraction.xsl");
 		String requestURL = request.getRequestURL().toString();
 		int index = requestURL.lastIndexOf("/");
-		cssLocation = requestURL.substring(0, index) + File.separator;
+		cssLocation = /*requestURL.substring(0, index)*/
+				"raw.githubusercontent.com/essepuntato/LODE/master/src/main/webapp" + File.separator;
 	}
 
 	/*
@@ -440,7 +441,7 @@ public class LodeServlet extends HttpServlet {
 
 		Transformer transformer = tfactory.newTransformer(new StreamSource(xsltURL));
 
-		transformer.setParameter("css-location", cssLocation);
+		transformer.setParameter("css-location", /*cssLocation*/"https://raw.githubusercontent.com/michalpavlina/LODE/master/src/main/webapp/");
 		transformer.setParameter("lang", lang);
 		transformer.setParameter("ontology-url", ontologyUrl);
 		transformer.setParameter("source", cssLocation + "source");

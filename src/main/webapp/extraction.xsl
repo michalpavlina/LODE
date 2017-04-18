@@ -27,6 +27,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
     xmlns:f="http://www.essepuntato.it/xslt/function"
     xmlns:dcterms="http://purl.org/dc/terms/"
+    xmlns:policy="http://ontology.bisnode.com/policy/"
     xmlns="http://www.w3.org/1999/xhtml">
      
     <xsl:include href="swrl-module.xsl" />
@@ -213,6 +214,12 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
         </div>
     </xsl:template>
     
+    <xsl:template match="dcterms:description[f:isInLanguage(.)][normalize-space() != '']">
+        <div class="info">
+            <xsl:call-template name="get.content" />
+        </div>
+    </xsl:template>
+
     <xsl:template match="dc:description[@*:resource]">
         <xsl:variable name="url" select="@*:resource" />
         <xsl:variable name="index" select="f:string-last-index-of($url,'.')" as="xs:integer?" />
@@ -265,7 +272,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
                 <xsl:value-of select="@*:resource" />
             </a>
             <xsl:text> (</xsl:text>
-            <a href="http://www.essepuntato.it/lode/owlapi/{@*:resource}"><xsl:value-of select="f:getDescriptionLabel('visualiseitwith')" /> LODE</a>
+            <a href="https://svc-dev-cluster1.blue.bisnode.net/ki1-lode-s/v1/extract?url={@*:resource}"><xsl:value-of select="f:getDescriptionLabel('visualiseitwith')" /> LODE</a>
             <xsl:text>)</xsl:text>
         </dd>
     </xsl:template>
@@ -353,6 +360,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
             <xsl:apply-templates select="rdfs:comment" />
             <xsl:call-template name="get.class.description" />
             <xsl:apply-templates select="dc:description[normalize-space() != ''] , dc:description[@*:resource]" />
+            <xsl:call-template name="get.description" />
         </div>
     </xsl:template>
     
@@ -366,6 +374,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
             <xsl:apply-templates select="rdfs:comment" />
             <xsl:call-template name="get.individual.description" />
             <xsl:apply-templates select="dc:description[normalize-space() != ''] , dc:description[@*:resource]" />
+            <xsl:call-template name="get.description" />
         </div>
     </xsl:template>
     
@@ -379,6 +388,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
             <xsl:apply-templates select="rdfs:comment" />
             <xsl:call-template name="get.property.description" />
             <xsl:apply-templates select="dc:description[normalize-space() != ''] , dc:description[@*:resource]" />
+            <xsl:call-template name="get.description" />
         </div>
     </xsl:template>
     
@@ -862,6 +872,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
         <xsl:call-template name="get.entity.url" />
         <xsl:call-template name="get.version" />
         <xsl:call-template name="get.author" />
+        <xsl:call-template name="get.policy" />
         <xsl:call-template name="get.original.source" />
     </xsl:template>
     
@@ -1369,6 +1380,34 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
         </xsl:if>
     </xsl:template>
     
+    <xsl:template name="get.policy">
+        <xsl:if test="exists(policy:hasPolicy)">
+            <dl>
+                <xsl:if test="exists(policy:hasPolicy)">
+                    <dt><xsl:value-of select="f:getDescriptionLabel('policies')" />:</dt>
+					<xsl:for-each select="policy:hasPolicy">
+						<dd><p>
+							<xsl:value-of select="@*:resource" />
+						</p></dd>
+					</xsl:for-each>
+                </xsl:if>
+            </dl>
+        </xsl:if>
+    </xsl:template>
+
+    <xsl:template name="get.description">
+        <xsl:if test="exists(dc:description | dcterms:description)">
+            <dl>
+                <dt><xsl:value-of select="f:getDescriptionLabel('description')" />:</dt>
+				<xsl:for-each select="dc:description | dcterms:description">
+					<dd><p>
+						<xsl:call-template name="get.content" />
+					</p></dd>
+				</xsl:for-each>
+            </dl>
+        </xsl:if>
+    </xsl:template>
+
     <xsl:template name="get.publisher">
         <xsl:if test="exists(dc:publisher | dcterms:publisher)">
             <dl>
